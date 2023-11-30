@@ -1,29 +1,34 @@
 pipeline {
-      agent any
-	  tools{
-	      maven 'apache-maven-3.9.4'
-	  }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
+    }
+
+    agent any
+
+    tools {
+        maven 'apache-maven-3.9.4'
+    }
 
     stages {
-        stage('code compilation') {
+        stage('Code Compilation') {
             steps {
-                echo 'code compilation is in progress'
+                echo 'Code Compilation is In Progress!'
                 sh 'mvn clean compile'
-				echo 'code compilation is in done'
-
+				echo 'Code Compilation is Completed Successfully!'
             }
         }
-        stage('code QA execution') {
+        stage('Code QA Execution') {
             steps {
-                echo 'test case check in progress'
+                echo 'Junit Test case check in Progress!'
                 sh 'mvn clean test'
             }
         }
         stage('Sonarqube') {
-                environment {
-                  scannerHome = tool 'qube'
-               }
-                   steps {
+                   environment {
+                       scannerHome = tool 'qube'
+                }
+                    steps {
                         withSonarQubeEnv('sonar-server') {
                         sh "${scannerHome}/bin/sonar-scanner"
                         sh 'mvn sonar:sonar'
@@ -33,11 +38,10 @@ pipeline {
                     }
                 }
         }
-		stage('Example Test') {
+        stage('Code Package') {
             steps {
-                echo 'creating war artifact'
+                echo 'Creating War Artifact'
                 sh 'mvn clean package'
-			}
-		}
+            }
+        }
     }
-}
