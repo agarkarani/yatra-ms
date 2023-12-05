@@ -1,48 +1,31 @@
 pipeline {
-
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
-    }
-
-    agent any
-
-    tools {
-        maven 'apache-maven-3.9.4'
-    }
+      agent { label 'jenkins_slave' }
+	  tools{
+	      maven 'maven_3.9.4'
+	  }
 
     stages {
-        stage('Code Compilation') {
+        stage('code compilation') {
             steps {
-                echo 'Code Compilation is In Progress!'
+                echo 'code compilation is in progress'
                 sh 'mvn clean compile'
-				echo 'Code Compilation is Completed Successfully!'
+				echo 'code compilation is in done'
+
             }
         }
-        stage('Code QA Execution') {
+        stage('code QA execution') {
             steps {
-                echo 'Junit Test case check in Progress!'
+                echo 'test case check in progress'
                 sh 'mvn clean test'
             }
         }
-        stage('Sonarqube') {
-                   environment {
-                       scannerHome = tool 'qube'
-                }
-                    steps {
-                        withSonarQubeEnv('sonar-server') {
-                        sh "${scannerHome}/bin/sonar-scanner"
-                        sh 'mvn sonar:sonar'
-                    }
-                        timeout(time: 10, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
-        }
-        stage('Code Package') {
+		stage('Example Test') {
             steps {
-                echo 'Creating War Artifact'
+                echo 'creating war artifact'
                 sh 'mvn clean package'
-            }
-        }
+			}
+		}
     }
 }
+
+
