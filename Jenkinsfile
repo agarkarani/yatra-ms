@@ -1,5 +1,5 @@
 pipeline {
-      agent { label 'jenkinsslave' }
+      agent { label 'jenkinsslave' 'jenkinsslave2'}
 	  tools{
 	      maven 'apache-maven-3.9.4'
 	  }
